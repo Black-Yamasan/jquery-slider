@@ -20,14 +20,14 @@
     var slideRight = false;
 
     // options
-    var index = sliderOptions.index; // 中央に表示するスライド
-    var speed = sliderOptions.speed; // スライドするスピード
-    var delay = sliderOptions.delay; // アニメーションの間隔
-    var easing = sliderOptions.easing; // イージング
-    var pager = sliderOptions.pager; // ページャーを使用するかどうか(boolean)
-    var arrow = sliderOptions.arrow; // 矢印を使用するかどうか(boolean)
-    var autoPlay = sliderOptions.autoPlay; // 自動再生するかどうか(boolean)
-    var spWidth = sliderOptions.spWidth; // SPのサイズ(Number)
+    var index = sliderOptions.index; 
+    var speed = sliderOptions.speed;
+    var delay = sliderOptions.delay;
+    var easing = sliderOptions.easing;
+    var pager = sliderOptions.pager;
+    var arrow = sliderOptions.arrow;
+    var autoPlay = sliderOptions.autoPlay;
+    var spWidth = sliderOptions.spWidth;
     
     $slideGroup.clone().insertBefore($slideGroup);
     $slideGroup.clone().insertBefore($slideGroup);
@@ -250,20 +250,20 @@
   };
 
   $.fn.slider.defaults = {
-    speed: 600,
-    delay: 800,
-    easing: 'ease',
-    pager: true,
-    arrow: true,
-    autoPlay: false,
-    index: 0,
-    $slideMain: '#js-slideMain',
-    $slideGroup: '.js-slideGroup',
-    $slideChild: '.js-slideChild',
-    $slideContent: '#js-slideContent',
-    $slidePrev: 'js-slidePrev',
-    $slideNext: 'js-slideNext',
-    $slidePagerChild: 'js-slidePager_child',
-    spWidth: 768
+    speed: 600, // スライドのスピード
+    delay: 800, // アニメーションの間隔
+    easing: 'ease', // イージング
+    pager: true, // ページャーを使用するかどうか
+    arrow: true, // 前・後ろの矢印を使用するかどうか
+    autoPlay: false, // 自動再生をするかどうか
+    index: 0, // 中央に表示するスライドの順番
+    $slideMain: '#js-slideMain', // スライダーとページャー・矢印を囲う要素
+    $slideGroup: '.js-slideGroup', // スライダーのリストを囲う要素
+    $slideChild: '.js-slideChild', // スライダーのリスト一つ分の要素
+    $slideContent: '#js-slideContent', // アニメーションの対象になる要素
+    $slidePrev: 'js-slidePrev', // スライダーを前に送る左側の矢印のID名
+    $slideNext: 'js-slideNext', // スライダーを後ろに送る右側の矢印のID名
+    $slidePagerChild: 'js-slidePager_child', // ページャーのクラス名
+    spWidth: 768　// メディアクエリで切り替える数値
   };
 })(jQuery);
