@@ -1,6 +1,7 @@
 $(function() {
   var slideOptions = {
     speed: 650,
+    delay: 3000,
     easing: 'easeOutQuad',
     pager: true,
     arrow: true,

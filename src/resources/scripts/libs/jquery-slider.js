@@ -3,7 +3,8 @@
     var sliderOptions = $.extend( {}, $.fn.slider.defaults, options );
     var $el = $(this);
     var $win = $(window);
-    var timer = null;
+    var resizeTimer = null;
+    var slideTimer = null;
 
     var winWidth = $win.width();
     var innerWidth = window.innerWidth;
@@ -22,6 +23,7 @@
     // options
     var index = sliderOptions.index;
     var speed = sliderOptions.speed;
+    var delay = sliderOptions.delay;
     var easing = sliderOptions.easing;
     var pager = sliderOptions.pager;
     var arrow = sliderOptions.arrow;
@@ -85,12 +87,51 @@
       }
     }
 
+    function startAnimation() {
+      slideTimer = setInterval(function() {
+        index++;
+        slideAnimation();
+      }, delay);
+    }
+
+    function stopAnimation() {
+      clearInterval(slideTimer);
+    }
+
+    var hidden, visibilityChange;
+    if ( typeof document.hidden !== 'undefined' ) { // Opera 12.10 や Firefox 18 以降でサポート
+      hidden = 'hidden';
+      visibilityChange = 'visibilitychange';
+    } else if (typeof document.msHidden !== 'undefined') {
+      hidden = 'msHidden';
+      visibilityChange = 'msvisibilitychange';
+    } else if (typeof document.webkitHidden !== 'undefined') {
+      hidden = 'webkitHidden';
+      visibilityChange = 'webkitvisibilitychange';
+    }
+
+    function handleVisibilityChange() {
+      if ( document[hidden] ) {
+        stopAnimation();
+      } else {
+        startAnimation();
+      }
+    }
+
+    if (typeof document.addEventListener === 'undefined' || typeof document[hidden] === 'undefined') {
+      console.error('not supported');
+    } else {
+      if ( autoPlay ) {
+        document.addEventListener(visibilityChange, handleVisibilityChange, false);
+      }
+    }
+
     $win.on('resize', function() {
       if ( innerWidth === window.innerWidth ) { return; };
-      if ( timer ) {
-        clearTimeout(timer);
+      if ( resizeTimer ) {
+        clearTimeout(resizeTimer);
       }
-      timer = setTimeout(function() {
+      resizeTimer = setTimeout(function() {
         winWidth = $win.width();
         innerWidth = $win.innerWidth();
         slideWidth = $slideMain.width();
@@ -119,10 +160,15 @@
 
     init();
 
+    if ( autoPlay ) {
+      startAnimation();
+    }
+
   };
 
   $.fn.slider.defaults = {
     speed: 600,
+    delay: 800,
     easing: 'ease',
     pager: true,
     arrow: true,
