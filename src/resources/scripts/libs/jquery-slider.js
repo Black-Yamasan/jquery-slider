@@ -16,20 +16,24 @@
     var slideLength = $slideChild.length;
     var slideWidth = $slideMain.width();
     var isSlide = false;
+    var slideLeft = false;
+    var slideRight = false;
 
     // options
-    var index = sliderOptions.index;
-    var speed = sliderOptions.speed;
-    var delay = sliderOptions.delay;
-    var easing = sliderOptions.easing;
-    var pager = sliderOptions.pager;
-    var arrow = sliderOptions.arrow;
-    var autoPlay = sliderOptions.autoPlay;
-    var spWidth = sliderOptions.spWidth;
+    var index = sliderOptions.index; // 中央に表示するスライド
+    var speed = sliderOptions.speed; // スライドするスピード
+    var delay = sliderOptions.delay; // アニメーションの間隔
+    var easing = sliderOptions.easing; // イージング
+    var pager = sliderOptions.pager; // ページャーを使用するかどうか(boolean)
+    var arrow = sliderOptions.arrow; // 矢印を使用するかどうか(boolean)
+    var autoPlay = sliderOptions.autoPlay; // 自動再生するかどうか(boolean)
+    var spWidth = sliderOptions.spWidth; // SPのサイズ(Number)
     
     $slideGroup.clone().insertBefore($slideGroup);
-    $slideGroup.clone().insertAfter($slideGroup);
+    $slideGroup.clone().insertBefore($slideGroup);
+    $slideGroup.clone().insertBefore($slideGroup);
 
+    // ページャーを生成
     if ( pager ) {
       var $slidePager = $('<ul class="slidePager"></ul>').insertAfter($slideMain);
       for ( var i = 0; i < slideLength; i++ ) {
@@ -39,6 +43,7 @@
       $slidePagerChild.eq(index).addClass('active');
     }
 
+    // 前後の矢印を生成
     if ( arrow ) {
       $slideMain.append('<div class="slideArrow arrow-prev" id="' + sliderOptions.$slidePrev + '"></div>');
       $slideMain.append('<div class="slideArrow arrow-next" id="' + sliderOptions.$slideNext + '"></div>');
@@ -50,6 +55,7 @@
     var isSpWidth = window.matchMedia( '(max-width: ' + spWidth + 'px)' ).matches ? true : false;
     var arrowWidth = !!$slidePrev ? $slidePrev[0].clientWidth : 0;
 
+    // 初期化
     function init() {
       isSpWidth = window.matchMedia( '(max-width: ' + spWidth + 'px)' ).matches ? true : false;
       arrowWidth = !!$slidePrev ? $slidePrev[0].clientWidth : 0;
@@ -61,8 +67,8 @@
         slideWidth = $slideMain.width();
       }
       $slideContent.css({
-        width: slideWidth * slideLength * 3,
-        marginLeft: -slideWidth * slideLength
+        width: slideWidth * slideLength * 4,
+        marginLeft: -slideWidth * slideLength * 2
       });
       $slideContent.velocity({ translateX: -index * slideWidth }, { duration: 0 } );
       $slideChild = $slideContent.find(sliderOptions.$slideChild);
@@ -70,6 +76,7 @@
       $win.off('slide.slideResize');
     }
 
+    // アニメーション
     function slideAnimation() {
       isSlide = true;
       $slideContent.velocity({
@@ -82,9 +89,9 @@
             index = 0;
             $slideContent.velocity({ translateX: 0 }, { duration: 0 });
           }
-          if ( index < 0 ) {
-            index = slideLength - 1;
-            $slideContent.velocity({ translateX: -index * slideWidth }, { duration: 0 });
+          if ( index < -(slideLength - 1) ) {
+            index = 0;
+            $slideContent.velocity({ translateX: 0 }, { duration: 0 });
           }
           changePagerIndex(index);
           isSlide = false;
@@ -92,6 +99,10 @@
       });
     }
 
+    /**
+     * アクティブにするページャーを変更する
+     * @param { number } i スライドの番号 
+     */
     function changePagerIndex(i) {
       if ( pager ) {
         var $pagerIndex = $slidePagerChild.eq(i);
@@ -100,6 +111,7 @@
       }
     }
 
+    // アニメーションを開始
     function startAnimation() {
       slideTimer = setInterval(function() {
         index++;
@@ -107,10 +119,12 @@
       }, delay);
     }
 
+    // アニメーションを停止
     function stopAnimation() {
       clearInterval(slideTimer);
     }
 
+    // 現在のタブかどうかを監視
     var hidden, visibilityChange;
     if ( typeof document.hidden !== 'undefined' ) { // Opera 12.10 や Firefox 18 以降でサポート
       hidden = 'hidden';
@@ -123,6 +137,7 @@
       visibilityChange = 'webkitvisibilitychange';
     }
 
+    // 別タブに移っていればスライダーを停止する。戻ってきたら再生開始。
     function handleVisibilityChange() {
       if ( document[hidden] ) {
         stopAnimation();
@@ -172,6 +187,59 @@
         slideAnimation();
       });
     }
+
+    // タッチデバイスでの操作
+    $slideContent.on('touchstart', function(e) {
+      if ( autoPlay ) {
+        stopAnimation();
+      }
+      if ( isSlide ) return false;
+      this.touchX = e.originalEvent.changedTouches[0].pageX;
+      this.touchY = e.originalEvent.changedTouches[0].pageY;
+      this.slideX = $(this).position().left;
+    }).on('touchmove', function(e) {
+      if ( isSlide ) return false;
+      var moveX = this.touchX - e.originalEvent.changedTouches[0].pageX;
+      var moveY = this.touchY - e.originalEvent.changedTouches[0].pageY;
+      var moveRate = moveX / moveY;
+
+      if ( moveRate < 0 ) {
+        moveRate = -moveRate;
+      }
+
+      if ( moveRate > Math.tan(45 * Math.PI / 180) ) {
+        e.preventDefault();
+      }
+
+      this.slideX = this.slideX - moveX;
+
+      if ( moveX < 0 ) {
+        slideLeft = true;
+        slideRight = false;
+      }
+      if ( moveX > 0 ) {
+        slideLeft = false;
+        slideRight = true;
+      }
+      this.accel = (e.originalEvent.changedTouches[0].pageX - this.touchX) * 5;
+      this.touchX = e.originalEvent.changedTouches[0].pageX;
+      $(this).velocity({ translateX: this.slideX }, { duration: 0 });
+
+    }).on('touchend', function() {
+      this.slideX += this.accel;
+      if ( isSlide ) return false;
+      if ( slideLeft === true ) {
+        index--;
+      }
+      if ( slideRight === true ) {
+        index++;
+      }
+      slideAnimation();
+      this.accel = 0;
+      if ( autoPlay ) {
+       startAnimation(); 
+      }
+    });
 
     init();
 
