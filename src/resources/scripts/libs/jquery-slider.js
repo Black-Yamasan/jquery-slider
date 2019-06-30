@@ -33,9 +33,9 @@
     if ( pager ) {
       var $slidePager = $('<ul class="slidePager"></ul>').insertAfter($slideMain);
       for ( var i = 0; i < slideLength; i++ ) {
-        $slidePager.append('<li class="slidePager_child js-slidePager_child"></li>');
+        $slidePager.append('<li class="slidePager_child ' + sliderOptions.$slidePagerChild + '"></li>');
       }
-      var $slidePagerChild = $slidePager.find(sliderOptions.$slidePagerChild);
+      var $slidePagerChild = $slidePager.find('.' + sliderOptions.$slidePagerChild);
       $slidePagerChild.eq(index).addClass('active');
     }
 
@@ -195,7 +195,7 @@
     $slideContent: '#js-slideContent',
     $slidePrev: 'js-slidePrev',
     $slideNext: 'js-slideNext',
-    $slidePagerChild: '.js-slidePager_child',
+    $slidePagerChild: 'js-slidePager_child',
     spWidth: 768
   };
 })(jQuery);
