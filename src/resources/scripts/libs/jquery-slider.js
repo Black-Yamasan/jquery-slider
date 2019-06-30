@@ -6,15 +6,12 @@
     var resizeTimer = null;
     var slideTimer = null;
 
-    var winWidth = $win.width();
     var innerWidth = window.innerWidth;
 
     var $slideMain = $el.find(sliderOptions.$slideMain);
     var $slideContent = $el.find(sliderOptions.$slideContent);
     var $slideGroup = $el.find(sliderOptions.$slideGroup);
     var $slideChild = $el.find(sliderOptions.$slideChild);
-    var $slidePrev = $el.find(sliderOptions.$slidePrev);
-    var $slideNext = $el.find(sliderOptions.$slideNext);
 
     var slideLength = $slideChild.length;
     var slideWidth = $slideMain.width();
@@ -29,18 +26,33 @@
     var arrow = sliderOptions.arrow;
     var autoPlay = sliderOptions.autoPlay;
     var spWidth = sliderOptions.spWidth;
+    
+    $slideGroup.clone().insertBefore($slideGroup);
+    $slideGroup.clone().insertAfter($slideGroup);
 
-    var $beforeSlideGroup = $slideGroup.clone().insertBefore($slideGroup);
-    var $afterSlideGroup = $slideGroup.clone().insertAfter($slideGroup);
-    var $slidePagerChild = $el.find(sliderOptions.$slidePagerChild);
+    if ( pager ) {
+      var $slidePager = $('<ul class="slidePager"></ul>').insertAfter($slideMain);
+      for ( var i = 0; i < slideLength; i++ ) {
+        $slidePager.append('<li class="slidePager_child js-slidePager_child"></li>');
+      }
+      var $slidePagerChild = $slidePager.find(sliderOptions.$slidePagerChild);
+      $slidePagerChild.eq(index).addClass('active');
+    }
+
+    if ( arrow ) {
+      $slideMain.append('<div class="slideArrow arrow-prev" id="' + sliderOptions.$slidePrev + '"></div>');
+      $slideMain.append('<div class="slideArrow arrow-next" id="' + sliderOptions.$slideNext + '"></div>');
+
+      var $slidePrev = $slideMain.find('#' + sliderOptions.$slidePrev);
+      var $slideNext = $slideMain.find('#' + sliderOptions.$slideNext);
+    }
 
     var isSpWidth = window.matchMedia( '(max-width: ' + spWidth + 'px)' ).matches ? true : false;
-    var arrowWidth = $slidePrev[0].clientWidth;
-
-    $slidePagerChild.eq(index).addClass('active');
+    var arrowWidth = !!$slidePrev ? $slidePrev[0].clientWidth : 0;
 
     function init() {
       isSpWidth = window.matchMedia( '(max-width: ' + spWidth + 'px)' ).matches ? true : false;
+      arrowWidth = !!$slidePrev ? $slidePrev[0].clientWidth : 0;
       if ( isSpWidth ) {
         slideWidth = innerWidth - arrowWidth * 2;
         $slideMain.width( slideWidth );
@@ -55,6 +67,7 @@
       $slideContent.velocity({ translateX: -index * slideWidth }, { duration: 0 } );
       $slideChild = $slideContent.find(sliderOptions.$slideChild);
       $slideChild.width( slideWidth );
+      $win.off('slide.slideResize');
     }
 
     function slideAnimation() {
@@ -126,37 +139,39 @@
       }
     }
 
-    $win.on('resize', function() {
+    $win.on('resize.slideResize', function() {
       if ( innerWidth === window.innerWidth ) { return; };
       if ( resizeTimer ) {
         clearTimeout(resizeTimer);
       }
       resizeTimer = setTimeout(function() {
-        winWidth = $win.width();
-        innerWidth = $win.innerWidth();
-        slideWidth = $slideMain.width();
+        innerWidth = window.innerWidth;
         init();
-      }, 66);
+      }, 40);
     });
 
-    $slidePrev.on('click', function() {
-      if ( isSlide ) return;
-      index--;
-      slideAnimation();
-    });
+    if ( arrow ) {
+      $slidePrev.on('click', function() {
+        if ( isSlide ) return;
+        index--;
+        slideAnimation();
+      });
+  
+      $slideNext.on('click', function() {
+        if ( isSlide ) return;
+        index++;
+        slideAnimation();
+      });
+    }
 
-    $slideNext.on('click', function() {
-      if ( isSlide ) return;
-      index++;
-      slideAnimation();
-    });
-
-    $slidePagerChild.on('click', function() {
-      if ( isSlide ) return;
-      var $self = $(this);
-      index = $slidePagerChild.index($self);
-      slideAnimation();
-    });
+    if ( pager ) {
+      $slidePagerChild.on('click', function() {
+        if ( isSlide ) return;
+        var $self = $(this);
+        index = $slidePagerChild.index($self);
+        slideAnimation();
+      });
+    }
 
     init();
 
@@ -178,8 +193,8 @@
     $slideGroup: '.js-slideGroup',
     $slideChild: '.js-slideChild',
     $slideContent: '#js-slideContent',
-    $slidePrev: '#js-slidePrev',
-    $slideNext: '#js-slideNext',
+    $slidePrev: 'js-slidePrev',
+    $slideNext: 'js-slideNext',
     $slidePagerChild: '.js-slidePager_child',
     spWidth: 768
   };
