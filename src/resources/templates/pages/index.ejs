@@ -1,0 +1,33 @@
+<%_
+  var root = '';
+  var pageId = 'index';
+  var title = 'slider demo page';
+  var description = '';
+  var keywords = '';
+  var cssFile = ['index'];
+  var jsFile = ['demo'];
+_%>
+<%_ include ../include/_header _%>
+
+  <div class="slide" id="js-slide">
+    <div class="slideWrap">
+      <div class="slideMain" id="js-slideMain">
+        <div class="slideContent" id="js-slideContent">
+          <ul class="slideGroup js-slideGroup">
+          <%_ for ( var i = 1; i <= 4; i++ ) { _%>
+            <li class="slideChild js-slideChild"><img src="<%= root %>images/img_0<%= i %>.jpg" alt="" class="img-rsp"></li>
+          <%_ } _%>
+          </ul>
+        </div>
+        <div class="slideArrow arrow-prev" id="js-slidePrev"></div>
+        <div class="slideArrow arrow-next" id="js-slideNext"></div>
+      </div>
+      <ul class="slidePager">
+      <%_ for ( var i = 0; i < 4; i++ ) { _%>
+        <li class="slidePager_child js-slidePager_child"></li>
+      <%_ } _%>
+      </ul>
+    </div>
+  </div>
+
+<%_ include ../include/_footer _%>

@@ -1,0 +1,111 @@
+$ARROW_WIDTH: 60px;
+$ARROW_COLOR: hsl(250%, 60%, 50%);
+$SP_ARROW_WIDTH: percentage($ARROW_WIDTH / $SP_WIDTH);
+
+.img-rsp {
+  max-width: 100%;
+  height: auto
+}
+
+.slide {
+  overflow: hidden;
+  padding: 0 $ARROW_WIDTH 40px $ARROW_WIDTH;
+
+  @media #{$MEDIA_SP} {
+    padding: 0 0 40px 0;
+  }
+
+  &Wrap {
+   
+  }
+
+  &Main {
+    position: relative;
+    max-width: $MAX_WIDTH;
+    margin: 0 auto;
+  }
+
+  &Content {
+    position: relative;
+    width: 100000px;
+    overflow: hidden;
+  }
+
+  &Group {
+    float: left;
+    overflow: hidden;
+  }
+
+  &Child {
+    float: left;
+  }
+
+  &Pager {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  &Pager_child {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 4px;
+    text-align: center;
+    background: #333;
+    border-radius: 50%;
+    cursor: pointer;
+
+    &.active {
+      background: #64cdcc;
+      pointer-events: none;
+    }
+  }
+
+  &Arrow {
+    position: absolute;
+    top: 50%;
+    width: $ARROW_WIDTH;
+    height: $ARROW_WIDTH * 2;
+    background: hsl(210%, 90%, 50%);
+    opacity: 0.6;
+    cursor: pointer;
+    transform: translate(0, -50%);
+    overflow: hidden;
+
+    @media #{$MEDIA_SP} {
+      width: percentage($ARROW_WIDTH / $SP_WIDTH);
+      height: 0;
+      padding: percentage($ARROW_WIDTH / $SP_WIDTH) 0;
+    }
+
+    &.arrow-prev {
+      left: -$ARROW_WIDTH;
+      @media #{$MEDIA_SP} {
+        left: percentage(-$ARROW_WIDTH / $SP_WIDTH);
+      }
+      &:before {
+        left: 50%;
+        @include arrow($ARROW_WIDTH, $ARROW_WIDTH, 8px, $ARROW_COLOR, -25%, -45deg);
+        content: '';
+        @media #{$MEDIA_SP} {
+          @include arrow(100%, 50%, 8px, $ARROW_COLOR, -25%, -45deg);
+        }
+      }
+    }
+
+    &.arrow-next {
+      right: -$ARROW_WIDTH;
+      @media #{$MEDIA_SP} {
+        right: percentage(-$ARROW_WIDTH / $SP_WIDTH);
+      }
+      &:before {
+        right: 50%;
+        @include arrow($ARROW_WIDTH, $ARROW_WIDTH, 8px, $ARROW_COLOR, 25%, 135deg);
+        content: '';
+        @media #{$MEDIA_SP} {
+          @include arrow(100%, 50%, 8px, $ARROW_COLOR, 25%, 135deg);
+        }
+      }
+    }
+  }
+}
