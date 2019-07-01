@@ -6,9 +6,9 @@ if(x){l.append('<div class="slideArrow arrow-prev" id="'+e.$slidePrev+'"></div>'
 // 初期化
 function N(){k=!!window.matchMedia("(max-width: "+C+"px)").matches,H=T?T[0].clientWidth:0,k?(u=a-2*H,l.width(u)):(l.css("width",""),u=l.width()),o.css({width:u*h*4,marginLeft:-u*h*2}),o.velocity({translateX:-p*u},{duration:0}),(r=o.find(e.$slideChild)).width(u),t.off("slide.slideResize")}
 // アニメーション
-function Y(){f=!0,o.velocity({translateX:-p*u},{duration:w,easing:X,complete:function(){h<=p&&(p=0,o.velocity({translateX:0},{duration:0})),p<-(h-1)&&(p=0,o.velocity({translateX:0},{duration:0})),function(i){if($){var e=E.eq(i);E.not(e).removeClass("active"),e.addClass("active")}}
+function Y(){f=!0,y&&A(),o.velocity({translateX:-p*u},{duration:w,easing:X,complete:function(){h<=p&&(p=0,o.velocity({translateX:0},{duration:0})),p<-(h-1)&&(p=0,o.velocity({translateX:0},{duration:0})),function(i){if($){var e=E.eq(i);E.not(e).removeClass("active"),e.addClass("active")}}
 // アニメーションを開始
-(p),f=!1}})}function z(){s=setInterval(function(){p++,Y()},m)}
+(p),f=!1,y&&z()}})}function z(){s=setInterval(function(){p++,Y()},m)}
 // アニメーションを停止
 function A(){clearInterval(s)}
 // 現在のタブかどうかを監視
