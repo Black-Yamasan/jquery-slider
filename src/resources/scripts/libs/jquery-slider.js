@@ -79,6 +79,9 @@
     // アニメーション
     function slideAnimation() {
       isSlide = true;
+      if ( autoPlay ) {
+        stopAnimation();
+      }
       $slideContent.velocity({
         translateX: -index * slideWidth
       }, {
@@ -95,6 +98,9 @@
           }
           changePagerIndex(index);
           isSlide = false;
+          if ( autoPlay ) {
+            startAnimation();
+          }
         }
       });
     }
